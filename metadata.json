@@ -1,0 +1,6 @@
+{
+  "name": "কাঁচামাল হিসাব খাতা - সবজি ব্যবসা ম্যানেজার",
+  "description": "সবজির পাইকারি ও খুচরা ব্যবসার প্রতিদিনের কেনাবেচা, মজুত, বাকি-নগদ, লাভ-ক্ষতি, বাজারদর ও অটোমেটিক ইনভয়েস ম্যানেজমেন্ট সিস্টেম।",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

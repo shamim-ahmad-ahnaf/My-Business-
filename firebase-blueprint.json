@@ -1,0 +1,70 @@
+{
+  "entities": {
+    "StoreData": {
+      "title": "StoreData",
+      "description": "Wholesale vegetable market shared store data synchronized in real-time across multiple devices",
+      "type": "object",
+      "properties": {
+        "profile": {
+          "type": "object",
+          "description": "Business profile details"
+        },
+        "items": {
+          "type": "array",
+          "description": "Vegetable items inventory and pricing"
+        },
+        "sales": {
+          "type": "array",
+          "description": "Sales records and memo history"
+        },
+        "purchases": {
+          "type": "array",
+          "description": "Mokam procurement and purchase records"
+        },
+        "customers": {
+          "type": "array",
+          "description": "Customer khata records and due balances"
+        },
+        "suppliers": {
+          "type": "array",
+          "description": "Supplier khata records and payable balances"
+        },
+        "expenses": {
+          "type": "array",
+          "description": "Business expense records"
+        },
+        "spoilages": {
+          "type": "array",
+          "description": "Produce spoilage and wastage logs"
+        },
+        "marketRates": {
+          "type": "array",
+          "description": "Daily vegetable market wholesale and retail rates"
+        },
+        "notifications": {
+          "type": "array",
+          "description": "Notifications and system alerts"
+        },
+        "transactions": {
+          "type": "array",
+          "description": "Cash and mobile money transactions"
+        },
+        "lastUpdated": {
+          "type": "string",
+          "description": "ISO timestamp of the most recent sync update"
+        },
+        "updatedBy": {
+          "type": "string",
+          "description": "Identifier of the device that made the change"
+        }
+      },
+      "required": ["lastUpdated"]
+    }
+  },
+  "firestore": {
+    "/stores/{storeId}": {
+      "schema": "StoreData",
+      "description": "Multi-device synchronized wholesale market document store"
+    }
+  }
+}
