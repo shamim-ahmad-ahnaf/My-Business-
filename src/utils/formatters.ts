@@ -11,6 +11,16 @@ export function toBengaliNumber(val: number | string | undefined | null): string
   return val.toString().replace(/[0-9]/g, (w) => banglaDigits[w] || w);
 }
 
+// Convert Bengali digits to English digits
+export function toEnglishNumber(val: string | number | undefined | null): string {
+  if (val === undefined || val === null || val === '') return '';
+  const enDigits: { [key: string]: string } = {
+    '০': '0', '১': '1', '২': '2', '৩': '3', '৪': '4',
+    '৫': '5', '৬': '6', '৭': '7', '৮': '8', '৯': '9'
+  };
+  return val.toString().replace(/[০-৯]/g, (w) => enDigits[w] || w);
+}
+
 // Format currency in Taka with ৳ symbol and Bengali numbers
 export function formatTaka(amount: number, useBengaliDigits = true): string {
   const rounded = Math.round(amount);

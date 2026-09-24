@@ -11,9 +11,11 @@ import {
   MessageSquare, 
   CheckCircle2,
   DollarSign,
-  Calculator
+  Calculator,
+  X
 } from 'lucide-react';
 import { CalcInput } from './CalcInput';
+import { VoiceSearchButton } from './VoiceSearchButton';
 import { Customer, Supplier, PaymentTransaction } from '../types';
 import { formatTaka, toBengaliNumber } from '../utils/formatters';
 
@@ -240,15 +242,32 @@ export const CustomersSuppliers: React.FC<CustomersSuppliersProps> = ({
         </div>
 
         {/* Search */}
-        <div className="relative w-full sm:w-72">
+        <div className="relative w-full sm:w-80">
           <Search className="w-4 h-4 absolute left-3 top-2.5 text-stone-400" />
           <input
             type="text"
             placeholder={activeTab === 'customers' ? 'কাস্টমারের নাম বা ফোন...' : 'মহাজন বা মোকামের নাম...'}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-9 pr-3 py-1.5 text-xs sm:text-sm rounded-lg bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 focus:outline-hidden dark:text-stone-100"
+            className="w-full pl-9 pr-16 py-1.5 text-xs sm:text-sm rounded-lg bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 focus:outline-hidden dark:text-stone-100"
           />
+          <div className="absolute right-1.5 top-1 flex items-center gap-0.5">
+            {searchTerm && (
+              <button
+                type="button"
+                onClick={() => setSearchTerm('')}
+                className="p-1 rounded text-stone-400 hover:text-stone-600 dark:hover:text-stone-200"
+                title="সার্চ মুছুন"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+            <VoiceSearchButton
+              onTranscript={(text) => setSearchTerm(text)}
+              placeholderHint={activeTab === 'customers' ? 'কাস্টমারের নাম বলুন...' : 'মহাজনের নাম বলুন...'}
+              size="sm"
+            />
+          </div>
         </div>
       </div>
 

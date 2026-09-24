@@ -11,9 +11,12 @@ import {
   Calendar,
   AlertCircle,
   QrCode,
-  Calculator
+  Calculator,
+  X,
+  Tag
 } from 'lucide-react';
 import { CalcInput } from './CalcInput';
+import { VoiceSearchButton } from './VoiceSearchButton';
 import { 
   VegetableItem, 
   SaleRecord, 
@@ -25,6 +28,7 @@ import {
   formatTaka, 
   formatBanglaDate, 
   toBengaliNumber, 
+  toEnglishNumber,
   convertToKg 
 } from '../utils/formatters';
 import { exportSalesToCsv } from '../utils/storage';
@@ -263,14 +267,30 @@ export const SalesManager: React.FC<SalesManagerProps> = ({
     setNotes('');
   };
 
-  // Filter Sales
+  // Filter Sales by customer name, invoice number, customer phone, or product name
   const filteredSales = sales.filter(sale => {
-    const matchesSearch = 
-      sale.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      sale.invoiceNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (sale.customerPhone && sale.customerPhone.includes(searchTerm));
+    const rawTerm = searchTerm.trim().toLowerCase();
+    if (rawTerm) {
+      const enTerm = toEnglishNumber(rawTerm);
+      const enInvoice = toEnglishNumber(sale.invoiceNo.toLowerCase());
 
-    if (!matchesSearch) return false;
+      const matchesCustomer = sale.customerName.toLowerCase().includes(rawTerm);
+      const matchesInvoice = 
+        sale.invoiceNo.toLowerCase().includes(rawTerm) ||
+        enInvoice.includes(enTerm);
+      const matchesPhone = Boolean(sale.customerPhone && sale.customerPhone.includes(rawTerm));
+
+      // Check if any product / item in this sale matches the search term
+      const matchesProduct = Boolean(
+        sale.items && sale.items.some(item => 
+          item.itemName.toLowerCase().includes(rawTerm)
+        )
+      );
+
+      if (!matchesCustomer && !matchesInvoice && !matchesPhone && !matchesProduct) {
+        return false;
+      }
+    }
 
     if (dateFilter === 'today') {
       return sale.date.slice(0, 10) === new Date().toISOString().slice(0, 10);
@@ -285,6 +305,10 @@ export const SalesManager: React.FC<SalesManagerProps> = ({
     }
     return true;
   });
+
+  const totalFilteredSalesAmount = filteredSales.reduce((acc, s) => acc + s.grandTotal, 0);
+  const totalFilteredPaidAmount = filteredSales.reduce((acc, s) => acc + s.paidAmount, 0);
+  const totalFilteredDueAmount = filteredSales.reduce((acc, s) => acc + s.dueAmount, 0);
 
   return (
     <div className="space-y-6">
@@ -335,45 +359,117 @@ export const SalesManager: React.FC<SalesManagerProps> = ({
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="flex flex-col sm:flex-row gap-3 bg-white dark:bg-stone-900 p-3 rounded-xl border border-stone-200 dark:border-stone-800 shadow-xs">
-        <div className="relative flex-1">
-          <Search className="w-4 h-4 absolute left-3 top-2.5 text-stone-400" />
-          <input
-            type="text"
-            placeholder="ক্রেতার নাম, ফোন নম্বর বা ইনভয়েস নম্বর দিয়ে খুঁজুন..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-9 pr-10 py-1.5 text-xs sm:text-sm rounded-lg bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 focus:outline-hidden focus:border-emerald-500 dark:text-stone-100"
-          />
-          {onOpenQrScanner && (
+      <div className="space-y-2.5 bg-white dark:bg-stone-900 p-3.5 rounded-xl border border-stone-200 dark:border-stone-800 shadow-xs">
+        <div className="flex flex-col sm:flex-row gap-2.5">
+          <div className="relative flex-1">
+            <Search className="w-4 h-4 absolute left-3 top-3 text-stone-400" />
+            <input
+              type="text"
+              placeholder="ক্রেতার নাম, ইনভয়েস নম্বর (যেমন: ১০০১) বা পণ্যের নাম (যেমন: আলু, পেঁয়াজ) দিয়ে খুঁজুন..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-9 pr-24 py-2 text-xs sm:text-sm rounded-lg bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 focus:outline-hidden focus:border-emerald-500 dark:text-stone-100 transition-colors"
+            />
+            <div className="absolute right-2 top-2 flex items-center gap-1">
+              {searchTerm && (
+                <button
+                  type="button"
+                  onClick={() => setSearchTerm('')}
+                  className="p-1 rounded text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 hover:bg-stone-200 dark:hover:bg-stone-700 transition-colors"
+                  title="সার্চ মুছুন"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+              <VoiceSearchButton
+                onTranscript={(text) => setSearchTerm(text)}
+                placeholderHint="ক্রেতার নাম বা মেমো নম্বর বলুন..."
+                size="sm"
+              />
+              {onOpenQrScanner && (
+                <button
+                  onClick={onOpenQrScanner}
+                  type="button"
+                  className="p-1 text-stone-400 hover:text-emerald-600 transition-colors"
+                  title="ক্যামেরা দিয়ে মেমো খুঁজুন"
+                >
+                  <QrCode className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+          </div>
+
+          <div className="flex items-center gap-1 overflow-x-auto pb-1 sm:pb-0">
+            {(['all', 'today', 'week', 'month'] as const).map((filter) => {
+              const labels = { all: 'সব বিক্রি', today: 'আজকের', week: 'বিগত ৭ দিন', month: 'এই মাস' };
+              return (
+                <button
+                  key={filter}
+                  onClick={() => setDateFilter(filter)}
+                  className={`px-3 py-2 text-xs font-medium rounded-lg whitespace-nowrap transition-colors ${
+                    dateFilter === filter
+                      ? 'bg-emerald-600 text-white shadow-2xs'
+                      : 'bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-stone-700'
+                  }`}
+                >
+                  {labels[filter]}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Quick Product Search Suggestions */}
+        <div className="flex flex-wrap items-center gap-1.5 pt-1 text-xs text-stone-500 dark:text-stone-400">
+          <span className="flex items-center gap-1 text-[11px] font-medium text-stone-400 dark:text-stone-500 mr-0.5">
+            <Tag className="w-3 h-3" />
+            দ্রুত পণ্য ফিল্টার:
+          </span>
+          {['আলু', 'পেঁয়াজ', 'রসুন', 'টমেটো', 'কাঁচামরিচ', 'বেগুন', 'আদা'].map((veg) => (
             <button
-              onClick={onOpenQrScanner}
+              key={veg}
               type="button"
-              className="absolute right-2 top-2 p-1 text-stone-400 hover:text-emerald-600 transition-colors"
-              title="ক্যামেরা দিয়ে মেমো খুঁজুন"
+              onClick={() => setSearchTerm(veg)}
+              className={`px-2 py-0.5 text-[11px] rounded-md transition-colors ${
+                searchTerm.toLowerCase() === veg.toLowerCase()
+                  ? 'bg-emerald-600 text-white font-medium shadow-2xs'
+                  : 'bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-emerald-50 dark:hover:bg-emerald-950 hover:text-emerald-600'
+              }`}
             >
-              <QrCode className="w-4 h-4" />
+              {veg}
+            </button>
+          ))}
+          {searchTerm && (
+            <button
+              type="button"
+              onClick={() => setSearchTerm('')}
+              className="px-2 py-0.5 text-[11px] text-rose-600 dark:text-rose-400 hover:underline font-medium ml-auto flex items-center gap-1"
+            >
+              <X className="w-3 h-3" />
+              ফিল্টার বাতিল
             </button>
           )}
         </div>
 
-        <div className="flex items-center gap-1 overflow-x-auto">
-          {(['all', 'today', 'week', 'month'] as const).map((filter) => {
-            const labels = { all: 'সব বিক্রি', today: 'আজকের', week: 'বিগত ৭ দিন', month: 'এই মাস' };
-            return (
-              <button
-                key={filter}
-                onClick={() => setDateFilter(filter)}
-                className={`px-3 py-1.5 text-xs font-medium rounded-lg whitespace-nowrap transition-colors ${
-                  dateFilter === filter
-                    ? 'bg-emerald-600 text-white'
-                    : 'bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-200'
-                }`}
-              >
-                {labels[filter]}
-              </button>
-            );
-          })}
+        {/* Search Results Summary Bar */}
+        <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-stone-100 dark:border-stone-800/80 text-xs">
+          <div className="flex items-center gap-2">
+            <span className="text-stone-600 dark:text-stone-300 font-medium">
+              পাওয়া গেছে: <strong className="text-emerald-600 dark:text-emerald-400 font-bold">{toBengaliNumber(filteredSales.length)}</strong> টি মেমো
+            </span>
+            {searchTerm && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 font-medium text-[11px]">
+                কীওয়ার্ড: &ldquo;{searchTerm}&rdquo;
+              </span>
+            )}
+          </div>
+          <div className="flex items-center gap-3 text-stone-500 dark:text-stone-400 text-[11px] sm:text-xs">
+            <span>মোট বিক্রি: <strong className="text-stone-800 dark:text-stone-200">{formatTaka(totalFilteredSalesAmount)}</strong></span>
+            <span>জমা: <strong className="text-emerald-600 dark:text-emerald-400">{formatTaka(totalFilteredPaidAmount)}</strong></span>
+            {totalFilteredDueAmount > 0 && (
+              <span>বাকি: <strong className="text-rose-600 dark:text-rose-400">{formatTaka(totalFilteredDueAmount)}</strong></span>
+            )}
+          </div>
         </div>
       </div>
 
@@ -410,9 +506,23 @@ export const SalesManager: React.FC<SalesManagerProps> = ({
                       <div className="text-[11px] text-stone-400">{sale.customerPhone}</div>
                     )}
                   </td>
-                  <td className="py-3 px-3 text-stone-700 dark:text-stone-300 text-xs max-w-[200px]">
-                    <div className="truncate">
-                      {sale.items.map(i => `${i.itemName} (${toBengaliNumber(i.quantity)} ${i.unit})`).join(', ')}
+                  <td className="py-3 px-3 text-stone-700 dark:text-stone-300 text-xs max-w-[240px]">
+                    <div className="flex flex-wrap gap-1">
+                      {sale.items.map((i, idx) => {
+                        const isMatched = searchTerm.trim() && i.itemName.toLowerCase().includes(searchTerm.trim().toLowerCase());
+                        return (
+                          <span 
+                            key={idx} 
+                            className={`inline-block px-1.5 py-0.5 rounded text-[11px] ${
+                              isMatched 
+                                ? 'bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 font-bold ring-1 ring-emerald-500' 
+                                : 'bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300'
+                            }`}
+                          >
+                            {i.itemName} ({toBengaliNumber(i.quantity)} {i.unit})
+                          </span>
+                        );
+                      })}
                     </div>
                   </td>
                   <td className="py-3 px-3 text-right font-bold text-stone-900 dark:text-stone-100">
@@ -448,7 +558,23 @@ export const SalesManager: React.FC<SalesManagerProps> = ({
               {filteredSales.length === 0 && (
                 <tr>
                   <td colSpan={9} className="py-12 text-center text-stone-400">
-                    কোনো বিক্রয় রেকর্ড খুঁজে পাওয়া যায়নি
+                    <div className="flex flex-col items-center justify-center gap-2">
+                      <Search className="w-8 h-8 text-stone-300 dark:text-stone-600" />
+                      <p className="text-sm font-medium text-stone-600 dark:text-stone-400">
+                        {searchTerm
+                          ? `"${searchTerm}" সম্পর্কিত কোনো বিক্রয় মেমো খুঁজে পাওয়া যায়নি`
+                          : 'কোনো বিক্রয় রেকর্ড খুঁজে পাওয়া যায়নি'}
+                      </p>
+                      {searchTerm && (
+                        <button
+                          type="button"
+                          onClick={() => setSearchTerm('')}
+                          className="px-3 py-1 text-xs font-semibold text-emerald-600 hover:text-emerald-700 bg-emerald-50 dark:bg-emerald-950 rounded-lg hover:bg-emerald-100 transition-colors"
+                        >
+                          সার্চ ফিল্টার রিসেট করুন
+                        </button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               )}
@@ -499,9 +625,25 @@ export const SalesManager: React.FC<SalesManagerProps> = ({
               </div>
 
               {/* Items summary */}
-              <div className="text-xs text-stone-600 dark:text-stone-400 mt-2 bg-stone-50 dark:bg-stone-800/50 p-2 rounded-lg">
-                <span className="font-medium text-stone-500">পণ্য: </span>
-                {sale.items.map(i => `${i.itemName} (${toBengaliNumber(i.quantity)} ${i.unit})`).join(', ')}
+              <div className="text-xs text-stone-600 dark:text-stone-400 mt-2 bg-stone-50 dark:bg-stone-800/50 p-2.5 rounded-lg">
+                <span className="font-medium text-stone-500 block mb-1">বিক্রিত পণ্য:</span>
+                <div className="flex flex-wrap gap-1">
+                  {sale.items.map((i, idx) => {
+                    const isMatched = searchTerm.trim() && i.itemName.toLowerCase().includes(searchTerm.trim().toLowerCase());
+                    return (
+                      <span
+                        key={idx}
+                        className={`inline-block px-1.5 py-0.5 rounded text-[11px] ${
+                          isMatched
+                            ? 'bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 font-bold ring-1 ring-emerald-500'
+                            : 'bg-white dark:bg-stone-700 text-stone-700 dark:text-stone-300 border border-stone-200 dark:border-stone-600'
+                        }`}
+                      >
+                        {i.itemName} ({toBengaliNumber(i.quantity)} {i.unit})
+                      </span>
+                    );
+                  })}
+                </div>
               </div>
 
               {/* Card Footer: Due and Invoice Button */}
@@ -529,8 +671,22 @@ export const SalesManager: React.FC<SalesManagerProps> = ({
           ))}
 
           {filteredSales.length === 0 && (
-            <div className="py-10 text-center text-xs text-stone-400">
-              কোনো বিক্রয় রেকর্ড খুঁজে পাওয়া যায়নি
+            <div className="py-12 text-center text-xs text-stone-400 px-4">
+              <Search className="w-8 h-8 mx-auto mb-2 text-stone-300 dark:text-stone-600" />
+              <p className="text-xs sm:text-sm font-medium text-stone-600 dark:text-stone-400">
+                {searchTerm
+                  ? `"${searchTerm}" সম্পর্কিত কোনো মেমো খুঁজে পাওয়া যায়নি`
+                  : 'কোনো বিক্রয় রেকর্ড খুঁজে পাওয়া যায়নি'}
+              </p>
+              {searchTerm && (
+                <button
+                  type="button"
+                  onClick={() => setSearchTerm('')}
+                  className="mt-2.5 px-3 py-1 text-xs font-semibold text-emerald-600 bg-emerald-50 dark:bg-emerald-950 rounded-lg hover:bg-emerald-100 transition-colors"
+                >
+                  সার্চ ফিল্টার রিসেট করুন
+                </button>
+              )}
             </div>
           )}
         </div>

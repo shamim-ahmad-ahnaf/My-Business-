@@ -97,6 +97,13 @@ function updateSyncStatus(status: SyncStatus) {
   syncStatusListeners.forEach(listener => listener(status, lastSyncTimestamp || undefined));
 }
 
+/**
+ * Strips all undefined properties recursively so Firestore setDoc never fails with unsupported undefined field value.
+ */
+function sanitizeForFirestore<T>(data: T): T {
+  return JSON.parse(JSON.stringify(data));
+}
+
 let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 let pendingPayload: AppSyncData = {};
 
@@ -127,7 +134,8 @@ export function pushToCloud(updates: Partial<AppSyncData>) {
   debounceTimer = setTimeout(async () => {
     try {
       const storeDocRef = doc(db, 'stores', STORE_DOC_ID);
-      await setDoc(storeDocRef, pendingPayload, { merge: true });
+      const cleanData = sanitizeForFirestore(pendingPayload);
+      await setDoc(storeDocRef, cleanData, { merge: true });
       updateSyncStatus('synced');
     } catch (err) {
       console.error('Failed to sync to Firestore cloud:', err);

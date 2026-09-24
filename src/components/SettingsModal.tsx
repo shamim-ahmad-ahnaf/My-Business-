@@ -167,7 +167,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
       address: address.trim(),
       tagline: tagline.trim(),
       slogan: tagline.trim(),
-      logo: logo || undefined
+      logo: logo ? logo.trim() : ''
     });
     setSuccessMsg('দোকান ও মালিকের তথ্য সফলভাবে সংরক্ষিত হয়েছে!');
     setTimeout(() => setSuccessMsg(''), 3000);

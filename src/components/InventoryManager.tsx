@@ -9,9 +9,12 @@ import {
   CheckCircle2, 
   Sparkles,
   Edit2,
-  Calculator
+  Calculator,
+  X,
+  Mic
 } from 'lucide-react';
 import { CalcInput } from './CalcInput';
+import { VoiceSearchButton } from './VoiceSearchButton';
 import { VegetableItem, SpoilageRecord, UnitType } from '../types';
 import { formatTaka, formatWeight, toBengaliNumber, formatBanglaDate } from '../utils/formatters';
 import { exportStockToCsv } from '../utils/storage';
@@ -33,6 +36,7 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [showOnlyLowStock, setShowOnlyLowStock] = useState<boolean>(false);
   const [showAddItemModal, setShowAddItemModal] = useState(false);
   const [showSpoilageModal, setShowSpoilageModal] = useState(false);
   const [editingStockItem, setEditingStockItem] = useState<VegetableItem | null>(null);
@@ -62,10 +66,13 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({
   const totalSpoilageLoss = spoilages.reduce((acc, s) => acc + s.lossAmount, 0);
 
   const filteredItems = items.filter(item => {
-    const matchesSearch = item.nameBn.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          item.nameEn.toLowerCase().includes(searchTerm.toLowerCase());
+    const rawSearch = searchTerm.trim().toLowerCase();
+    const matchesSearch = !rawSearch || 
+                          item.nameBn.toLowerCase().includes(rawSearch) ||
+                          item.nameEn.toLowerCase().includes(rawSearch);
     const matchesCat = selectedCategory === 'all' || item.category === selectedCategory;
-    return matchesSearch && matchesCat;
+    const matchesLowStock = !showOnlyLowStock || (item.currentStockKg <= item.minStockAlertKg);
+    return matchesSearch && matchesCat && matchesLowStock;
   });
 
   const handleSpoilageSubmit = (e: React.FormEvent) => {
@@ -216,27 +223,66 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({
           <Search className="w-4 h-4 absolute left-3 top-2.5 text-stone-400" />
           <input
             type="text"
-            placeholder="সবজির নাম দিয়ে খুঁজুন (যেমন: আলু, পেঁয়াজ, টমেটো)..."
+            placeholder="সবজির নাম দিয়ে খুঁজুন বা মুখে বলুন (যেমন: আলু, পেঁয়াজ, টমেটো)..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-9 pr-3 py-1.5 text-xs sm:text-sm rounded-lg bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 focus:outline-hidden dark:text-stone-100"
+            className="w-full pl-9 pr-16 py-1.5 text-xs sm:text-sm rounded-lg bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 focus:outline-hidden dark:text-stone-100"
           />
+          <div className="absolute right-1.5 top-1 flex items-center gap-0.5">
+            {searchTerm && (
+              <button
+                type="button"
+                onClick={() => setSearchTerm('')}
+                className="p-1 rounded text-stone-400 hover:text-stone-600 dark:hover:text-stone-200"
+                title="সার্চ মুছুন"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+            <VoiceSearchButton
+              onTranscript={(text) => setSearchTerm(text)}
+              placeholderHint="সবজির নাম মুখে বলুন (যেমন: আলু, পেঁয়াজ)..."
+              size="sm"
+            />
+          </div>
         </div>
 
-        <div className="flex items-center gap-1 overflow-x-auto">
+        <div className="flex items-center gap-1 overflow-x-auto pb-0.5 sm:pb-0">
           {['all', 'নিত্যপ্রয়োজনীয়', 'শাকসবজি', 'মসলাপাতি'].map((cat) => (
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
               className={`px-3 py-1.5 text-xs font-medium rounded-lg whitespace-nowrap transition-colors ${
-                selectedCategory === cat
-                  ? 'bg-emerald-600 text-white'
+                selectedCategory === cat && !showOnlyLowStock
+                  ? 'bg-emerald-600 text-white shadow-2xs'
                   : 'bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-200'
               }`}
             >
               {cat === 'all' ? 'সকল সবজি' : cat}
             </button>
           ))}
+
+          {/* Low Stock Filter Button */}
+          <button
+            type="button"
+            onClick={() => setShowOnlyLowStock(!showOnlyLowStock)}
+            className={`px-2.5 py-1.5 text-xs font-medium rounded-lg whitespace-nowrap transition-all flex items-center gap-1.5 ${
+              showOnlyLowStock
+                ? 'bg-amber-600 text-white shadow-sm font-semibold'
+                : lowStockCount > 0
+                ? 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-800 hover:bg-amber-100'
+                : 'bg-stone-100 dark:bg-stone-800 text-stone-500 hover:bg-stone-200'
+            }`}
+            title="কম স্টক হওয়া পণ্যগুলো দেখুন"
+          >
+            <AlertTriangle className={`w-3.5 h-3.5 ${lowStockCount > 0 && !showOnlyLowStock ? 'animate-bounce text-amber-600' : ''}`} />
+            <span>কম স্টক</span>
+            <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${
+              showOnlyLowStock ? 'bg-white/30 text-white' : 'bg-amber-200 dark:bg-amber-900 text-amber-900 dark:text-amber-100'
+            }`}>
+              {toBengaliNumber(lowStockCount)}
+            </span>
+          </button>
         </div>
       </div>
 
@@ -263,10 +309,20 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({
                 const isLow = item.currentStockKg <= item.minStockAlertKg;
                 const itemTotalVal = Math.round(item.currentStockKg * item.avgPurchasePricePerKg);
                 return (
-                  <tr key={item.id} className="hover:bg-stone-50/70 dark:hover:bg-stone-800/30 transition-colors">
+                  <tr 
+                    key={item.id} 
+                    className={`transition-colors border-l-4 ${
+                      isLow 
+                        ? 'bg-amber-50/70 dark:bg-amber-950/30 border-l-amber-500 hover:bg-amber-100/60 dark:hover:bg-amber-900/40' 
+                        : 'hover:bg-stone-50/70 dark:hover:bg-stone-800/30 border-l-transparent'
+                    }`}
+                  >
                     <td className="py-3 px-3">
                       <div className="font-bold text-stone-900 dark:text-stone-100 flex items-center gap-1.5">
                         <span>{item.nameBn}</span>
+                        {isLow && (
+                          <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping inline-block" title="কম স্টক সতর্কতা" />
+                        )}
                       </div>
                       <div className="text-[11px] text-stone-400">{item.nameEn}</div>
                     </td>
@@ -276,7 +332,14 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({
                       </span>
                     </td>
                     <td className="py-3 px-3 text-right font-bold text-stone-900 dark:text-stone-100">
-                      {formatWeight(item.currentStockKg)}
+                      <div className={isLow ? 'text-amber-700 dark:text-amber-300 font-extrabold' : ''}>
+                        {formatWeight(item.currentStockKg)}
+                      </div>
+                      {isLow && (
+                        <div className="text-[10px] text-amber-600 dark:text-amber-400 font-medium">
+                          ন্যূনতম: {formatWeight(item.minStockAlertKg)}
+                        </div>
+                      )}
                     </td>
                     <td className="py-3 px-3 text-right text-stone-600 dark:text-stone-400">
                       ৳{toBengaliNumber(item.avgPurchasePricePerKg)}/কেজি
@@ -292,7 +355,7 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({
                     </td>
                     <td className="py-3 px-3 text-center">
                       {isLow ? (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 ring-1 ring-amber-400/50 shadow-2xs animate-pulse">
                           <AlertTriangle className="w-3 h-3" />
                           <span>মজুত কম!</span>
                         </span>
@@ -327,12 +390,22 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({
             const isLow = item.currentStockKg <= item.minStockAlertKg;
             const itemTotalVal = Math.round(item.currentStockKg * item.avgPurchasePricePerKg);
             return (
-              <div key={item.id} className="p-4 hover:bg-stone-50 dark:hover:bg-stone-800/40 transition-colors">
+              <div 
+                key={item.id} 
+                className={`p-4 transition-colors border-l-4 ${
+                  isLow 
+                    ? 'bg-amber-50/40 dark:bg-amber-950/20 border-l-amber-500 hover:bg-amber-50/60' 
+                    : 'hover:bg-stone-50 dark:hover:bg-stone-800/40 border-l-transparent'
+                }`}
+              >
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <div>
                     <div className="flex items-center gap-2">
-                      <h4 className="font-bold text-base text-stone-900 dark:text-stone-100">
-                        {item.nameBn}
+                      <h4 className="font-bold text-base text-stone-900 dark:text-stone-100 flex items-center gap-1.5">
+                        <span>{item.nameBn}</span>
+                        {isLow && (
+                          <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping inline-block" />
+                        )}
                       </h4>
                       <span className="text-[10px] px-2 py-0.5 rounded-full bg-stone-100 dark:bg-stone-800 text-stone-500 font-medium">
                         {item.category}
@@ -342,8 +415,8 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({
                   </div>
 
                   {isLow ? (
-                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 shrink-0">
-                      <AlertTriangle className="w-3.5 h-3.5" />
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 dark:bg-amber-950/90 text-amber-800 dark:text-amber-300 ring-1 ring-amber-400/60 shrink-0 animate-pulse">
+                      <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
                       <span>মজুত কম!</span>
                     </span>
                   ) : (
@@ -356,9 +429,14 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({
                 <div className="grid grid-cols-2 gap-2 text-xs bg-stone-50 dark:bg-stone-800/50 p-2.5 rounded-xl my-2">
                   <div>
                     <span className="text-[10px] text-stone-400 block">বর্তমান মজুত</span>
-                    <span className="text-sm font-bold text-stone-900 dark:text-stone-100">
+                    <span className={`text-sm font-bold block ${isLow ? 'text-amber-700 dark:text-amber-300 font-extrabold' : 'text-stone-900 dark:text-stone-100'}`}>
                       {formatWeight(item.currentStockKg)}
                     </span>
+                    {isLow && (
+                      <span className="text-[10px] text-amber-600 dark:text-amber-400 font-medium">
+                        সতর্কতা সীমা: {formatWeight(item.minStockAlertKg)}
+                      </span>
+                    )}
                   </div>
                   <div>
                     <span className="text-[10px] text-stone-400 block">মোট মজুদ মূল্য</span>
