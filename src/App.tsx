@@ -81,7 +81,16 @@ export const App: React.FC = () => {
     return loadFromStorage(STORAGE_KEYS.PROFILE, initialBusinessProfile);
   });
   const [items, setItems] = useState<VegetableItem[]>(() => {
-    return loadFromStorage(STORAGE_KEYS.ITEMS, initialVegetables);
+    const saved = loadFromStorage(STORAGE_KEYS.ITEMS, initialVegetables);
+    if (Array.isArray(saved) && saved.length > 0) {
+      const existingIds = new Set(saved.map(i => i.id));
+      const missing = initialVegetables.filter(i => !existingIds.has(i.id));
+      if (missing.length > 0) {
+        return [...saved, ...missing];
+      }
+      return saved;
+    }
+    return initialVegetables;
   });
   const [sales, setSales] = useState<SaleRecord[]>(() => {
     return loadFromStorage(STORAGE_KEYS.SALES, initialSales);
@@ -102,7 +111,13 @@ export const App: React.FC = () => {
     return loadFromStorage(STORAGE_KEYS.SPOILAGES, initialSpoilage);
   });
   const [marketRates, setMarketRates] = useState<MarketRate[]>(() => {
-    return loadFromStorage(STORAGE_KEYS.MARKET_RATES, initialMarketRates);
+    const saved = loadFromStorage(STORAGE_KEYS.MARKET_RATES, initialMarketRates);
+    if (Array.isArray(saved) && saved.length > 0) {
+      const existingIds = new Set(saved.map((r: MarketRate) => r.itemId));
+      const missing = initialMarketRates.filter(r => !existingIds.has(r.itemId));
+      return missing.length > 0 ? [...saved, ...missing] : saved;
+    }
+    return initialMarketRates;
   });
   const [notifications, setNotifications] = useState<BusinessNotification[]>(() => {
     return loadFromStorage(STORAGE_KEYS.NOTIFICATIONS, initialNotifications);
@@ -412,6 +427,16 @@ export const App: React.FC = () => {
     addNotification(
       `মজুত সমন্বয় করা হয়েছে`,
       `${it?.nameBn || 'সবজি'} এর নতুন মজুত: ${newStockKg} কেজি`,
+      'stock'
+    );
+  };
+
+  // 4.1 Update Full Item (Category, Name, Prices, etc.)
+  const handleUpdateItem = (updatedItem: VegetableItem) => {
+    setItems(prev => prev.map(item => item.id === updatedItem.id ? updatedItem : item));
+    addNotification(
+      `পণ্যের তথ্য হালনাগাদ`,
+      `${updatedItem.nameBn} এর ক্যাটাগরি ও বিবরণ সফলভাবে আপডেট করা হয়েছে।`,
       'stock'
     );
   };
@@ -893,6 +918,7 @@ export const App: React.FC = () => {
             onAddItem={handleAddItem}
             onUpdateStock={handleUpdateStock}
             onAddSpoilage={handleAddSpoilage}
+            onUpdateItem={handleUpdateItem}
           />
         )}
 
@@ -915,12 +941,14 @@ export const App: React.FC = () => {
             items={items}
             profile={profile}
             onAddExpense={handleAddExpense}
+            onNavigate={(tab) => setActiveTab(tab)}
           />
         )}
 
         {activeTab === 'rates' && (
           <MarketRateTab
             marketRates={marketRates}
+            items={items}
             onUpdateMarketRate={handleUpdateMarketRate}
           />
         )}

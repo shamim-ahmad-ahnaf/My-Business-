@@ -132,6 +132,78 @@ export const INITIAL_ITEMS: VegetableItem[] = [
     currentRetailPricePerKg: 60,
     currentWholesalePricePerKg: 45,
     minStockAlertKg: 30,
+  },
+  {
+    id: 'item-12',
+    nameBn: 'কাঁচা ও পাকা পেঁপে',
+    nameEn: 'Papaya (Fresh)',
+    category: 'ফলমূল',
+    currentStockKg: 480,
+    defaultUnit: 'পাল্লা',
+    avgPurchasePricePerKg: 28,
+    currentRetailPricePerKg: 45,
+    currentWholesalePricePerKg: 35,
+    minStockAlertKg: 100,
+  },
+  {
+    id: 'item-13',
+    nameBn: 'তরমুজ (বড় লাল)',
+    nameEn: 'Watermelon',
+    category: 'ফলমূল',
+    currentStockKg: 650,
+    defaultUnit: 'পিস',
+    avgPurchasePricePerKg: 32,
+    currentRetailPricePerKg: 50,
+    currentWholesalePricePerKg: 40,
+    minStockAlertKg: 120,
+  },
+  {
+    id: 'item-14',
+    nameBn: 'কাঁচকলা ও সবরি কলা',
+    nameEn: 'Green & Ripe Banana',
+    category: 'ফলমূল',
+    currentStockKg: 350,
+    defaultUnit: 'পিস',
+    avgPurchasePricePerKg: 30,
+    currentRetailPricePerKg: 48,
+    currentWholesalePricePerKg: 38,
+    minStockAlertKg: 80,
+  },
+  {
+    id: 'item-15',
+    nameBn: 'কাগজি লেবু (দেশি)',
+    nameEn: 'Lime / Lemon',
+    category: 'ফলমূল',
+    currentStockKg: 95,
+    defaultUnit: 'পিস',
+    avgPurchasePricePerKg: 85,
+    currentRetailPricePerKg: 130,
+    currentWholesalePricePerKg: 105,
+    minStockAlertKg: 40,
+  },
+  {
+    id: 'item-16',
+    nameBn: 'লাল শাক ও পালং শাক',
+    nameEn: 'Leafy Spinach & Amaranth',
+    category: 'শাকসবজি',
+    currentStockKg: 160,
+    defaultUnit: 'পাল্লা',
+    avgPurchasePricePerKg: 22,
+    currentRetailPricePerKg: 35,
+    currentWholesalePricePerKg: 28,
+    minStockAlertKg: 50,
+  },
+  {
+    id: 'item-17',
+    nameBn: 'শুকনা মরিচ ও জিরা',
+    nameEn: 'Dry Red Chili & Cumin',
+    category: 'মসলাপাতি',
+    currentStockKg: 140,
+    defaultUnit: 'কেজি',
+    avgPurchasePricePerKg: 320,
+    currentRetailPricePerKg: 420,
+    currentWholesalePricePerKg: 370,
+    minStockAlertKg: 40,
   }
 ];
 
@@ -322,6 +394,114 @@ export const INITIAL_MARKET_RATES: MarketRate[] = [
     changePercent: -9.1,
     marketNote: 'স্থানীয় কৃষকদের প্রচুর শসার গাড়ি হাটে এসেছে',
     lastUpdated: '২০২৬-০৯-২২ সকাল ০৬:৩০'
+  },
+  {
+    itemId: 'item-9',
+    itemName: 'পটল',
+    yesterdayWholesaleKg: 46,
+    todayWholesaleKg: 48,
+    todayRetailKg: 60,
+    unit: 'কেজি',
+    trend: 'up',
+    changePercent: 4.3,
+    marketNote: 'মোকামে নতুন পটলের সরবরাহ সীমিত থাকায় পাইকারিতে দর কিছুটা চড়া',
+    lastUpdated: '২০২৬-০৯-২২ সকাল ০৬:৩০'
+  },
+  {
+    itemId: 'item-10',
+    itemName: 'মিষ্টি কুমড়া (গোটা)',
+    yesterdayWholesaleKg: 28,
+    todayWholesaleKg: 28,
+    todayRetailKg: 35,
+    unit: 'কেজি',
+    trend: 'same',
+    changePercent: 0,
+    marketNote: 'গোটা মিষ্টি কুমড়ার দর বেশ কয়েকদিন যাবৎ স্থিতিশীল',
+    lastUpdated: '২০২৬-০৯-২২ সকাল ০৬:১৫'
+  },
+  {
+    itemId: 'item-11',
+    itemName: 'লাউ (বড় পিস)',
+    yesterdayWholesaleKg: 48,
+    todayWholesaleKg: 45,
+    todayRetailKg: 60,
+    unit: 'পিস',
+    trend: 'down',
+    changePercent: -6.3,
+    marketNote: 'গ্রামাঞ্চল থেকে প্রচুর তাজা লাউয়ের সরবরাহ আসায় দর সামান্য নিম্নমুখী',
+    lastUpdated: '২০২৬-০৯-২২ সকাল ০৬:১৫'
+  },
+  {
+    itemId: 'item-12',
+    itemName: 'কাঁচা ও পাকা পেঁপে',
+    yesterdayWholesaleKg: 35,
+    todayWholesaleKg: 35,
+    todayRetailKg: 45,
+    unit: 'কেজি',
+    trend: 'same',
+    changePercent: 0,
+    marketNote: 'সবজি ও পাকা পেঁপের সরবরাহ স্বাভাবিক রয়েছে',
+    lastUpdated: '২০২৬-০৯-২২ সকাল ০৬:০০'
+  },
+  {
+    itemId: 'item-13',
+    itemName: 'তরমুজ (দেশি লাল)',
+    yesterdayWholesaleKg: 45,
+    todayWholesaleKg: 42,
+    todayRetailKg: 55,
+    unit: 'কেজি',
+    trend: 'down',
+    changePercent: -6.7,
+    marketNote: 'বরিশাল ও উপকূলীয় মোকাম থেকে বড় চালান পৌঁছানোয় দাম কমেছে',
+    lastUpdated: '২০২৬-০৯-২২ সকাল ০৬:০০'
+  },
+  {
+    itemId: 'item-14',
+    itemName: 'পাকা সাগর কলা',
+    yesterdayWholesaleKg: 42,
+    todayWholesaleKg: 45,
+    todayRetailKg: 55,
+    unit: 'কেজি',
+    trend: 'up',
+    changePercent: 7.1,
+    marketNote: 'নরসিংদী ও মধুপুর থেকে পাকা কলার চালান সীমিত থাকায় দর বেড়েছে',
+    lastUpdated: '২০২৬-০৯-২২ সকাল ০৫:৪৫'
+  },
+  {
+    itemId: 'item-15',
+    itemName: 'কলমি ও লাল শাক',
+    yesterdayWholesaleKg: 22,
+    todayWholesaleKg: 24,
+    todayRetailKg: 35,
+    unit: 'কেজি',
+    trend: 'up',
+    changePercent: 9.1,
+    marketNote: 'সকালের বাজারে তাজা শাকের প্রচুর চাহিদা থাকায় চড়া দর',
+    lastUpdated: '২০২৬-০৯-২২ সকাল ০৫:৪৫'
+  },
+  {
+    itemId: 'item-16',
+    itemName: 'কাঁচা লেবু (কাগজি)',
+    yesterdayWholesaleKg: 28,
+    todayWholesaleKg: 28,
+    todayRetailKg: 40,
+    unit: 'কেজি',
+    trend: 'same',
+    changePercent: 0,
+    marketNote: 'লেবুর পাইকারি ও খুচরা বাজার দর অপরিবর্তিত রয়েছে',
+    lastUpdated: '২০২৬-০৯-২২ সকাল ০৫:৩০'
+  },
+  {
+    itemId: 'item-17',
+    itemName: 'শুকনা মরিচ ও জিরা',
+    yesterdayWholesaleKg: 365,
+    todayWholesaleKg: 370,
+    todayRetailKg: 420,
+    unit: 'কেজি',
+    trend: 'up',
+    changePercent: 1.4,
+    marketNote: 'আমদানি ব্যয় বৃদ্ধির কারণে মসলা মোকামে পাইকারি দর ঊর্ধ্বমুখী',
+    lastUpdated: '২০২৬-০৯-২২ সকাল ০৫:৩০'
   }
 ];
 
@@ -471,6 +651,153 @@ export const INITIAL_SALES: SaleRecord[] = [
     dueAmount: 2400,
     paymentMethod: 'নগদ',
     date: '2026-09-20T11:00:00.000Z'
+  },
+  // October 2026 (Current Month)
+  {
+    id: 'sale-106',
+    invoiceNo: 'ইনভ-২০২৬-১০০৬',
+    customerId: 'cust-1',
+    customerName: 'আলমগীর হোটেল এন্ড রেস্টুরেন্ট',
+    customerPhone: '01712-345678',
+    items: [
+      { itemId: 'item-1', itemName: 'আলু (ডায়মন্ড লাল)', quantity: 4, unit: 'বস্তা', quantityInKg: 200, unitPrice: 34, totalPrice: 6800, costPricePerKg: 28 },
+      { itemId: 'item-2', itemName: 'পেঁয়াজ (দেশি পাবনা)', quantity: 2, unit: 'বস্তা', quantityInKg: 100, unitPrice: 76, totalPrice: 7600, costPricePerKg: 65 },
+      { itemId: 'item-6', itemName: 'টমেটো (পাকা দেশি)', quantity: 2, unit: 'খাঁচা', quantityInKg: 50, unitPrice: 72, totalPrice: 3600, costPricePerKg: 55 }
+    ],
+    subtotal: 18000,
+    discount: 200,
+    labourCost: 100,
+    grandTotal: 17900,
+    paidAmount: 15000,
+    dueAmount: 2900,
+    paymentMethod: 'নগদ',
+    date: '2026-10-10T08:30:00.000Z',
+    notes: 'অক্টোবর মাসের নিয়মিত অর্ডার'
+  },
+  {
+    id: 'sale-107',
+    invoiceNo: 'ইনভ-২০২৬-১০০৭',
+    customerId: 'cust-3',
+    customerName: 'হাজী কাশেম স্টোর (পাইকারি)',
+    customerPhone: '01934-567890',
+    items: [
+      { itemId: 'item-5', itemName: 'কাঁচামরিচ', quantity: 5, unit: 'পাল্লা', quantityInKg: 25, unitPrice: 145, totalPrice: 3625, costPricePerKg: 110 },
+      { itemId: 'item-7', itemName: 'বেগুন (গোল তালবেগুন)', quantity: 6, unit: 'পাল্লা', quantityInKg: 30, unitPrice: 58, totalPrice: 1740, costPricePerKg: 45 },
+      { itemId: 'item-3', itemName: 'রসুন (দেশি)', quantity: 10, unit: 'কেজি', quantityInKg: 10, unitPrice: 215, totalPrice: 2150, costPricePerKg: 170 }
+    ],
+    subtotal: 7515,
+    discount: 115,
+    grandTotal: 7400,
+    paidAmount: 7400,
+    dueAmount: 0,
+    paymentMethod: 'বিকাশ',
+    date: '2026-10-06T09:00:00.000Z'
+  },
+  // August 2026
+  {
+    id: 'sale-090',
+    invoiceNo: 'ইনভ-২০২৬-০৮৯০',
+    customerId: 'cust-1',
+    customerName: 'আলমগীর হোটেল এন্ড রেস্টুরেন্ট',
+    customerPhone: '01712-345678',
+    items: [
+      { itemId: 'item-1', itemName: 'আলু (ডায়মন্ড লাল)', quantity: 6, unit: 'বস্তা', quantityInKg: 300, unitPrice: 32, totalPrice: 9600, costPricePerKg: 27 },
+      { itemId: 'item-2', itemName: 'পেঁয়াজ (দেশি পাবনা)', quantity: 3, unit: 'বস্তা', quantityInKg: 150, unitPrice: 70, totalPrice: 10500, costPricePerKg: 60 }
+    ],
+    subtotal: 20100,
+    discount: 100,
+    grandTotal: 20000,
+    paidAmount: 18000,
+    dueAmount: 2000,
+    paymentMethod: 'নগদ',
+    date: '2026-08-25T08:00:00.000Z'
+  },
+  {
+    id: 'sale-089',
+    invoiceNo: 'ইনভ-২০২৬-০৮৮৯',
+    customerId: 'cust-2',
+    customerName: 'আব্দুর রহিম (খুচরা বিক্রেতা)',
+    items: [
+      { itemId: 'item-6', itemName: 'টমেটো (পাকা দেশি)', quantity: 4, unit: 'খাঁচা', quantityInKg: 100, unitPrice: 65, totalPrice: 6500, costPricePerKg: 50 },
+      { itemId: 'item-8', itemName: 'শসা (কচি হাইব্রিড)', quantity: 8, unit: 'পাল্লা', quantityInKg: 40, unitPrice: 40, totalPrice: 1600, costPricePerKg: 30 }
+    ],
+    subtotal: 8100,
+    discount: 100,
+    grandTotal: 8000,
+    paidAmount: 8000,
+    dueAmount: 0,
+    paymentMethod: 'নগদ',
+    date: '2026-08-14T09:30:00.000Z'
+  },
+  // July 2026
+  {
+    id: 'sale-080',
+    invoiceNo: 'ইনভ-২০২৬-০৭৮০',
+    customerId: 'cust-3',
+    customerName: 'হাজী কাশেম স্টোর (পাইকারি)',
+    items: [
+      { itemId: 'item-1', itemName: 'আলু (ডায়মন্ড লাল)', quantity: 4, unit: 'বস্তা', quantityInKg: 200, unitPrice: 30, totalPrice: 6000, costPricePerKg: 26 },
+      { itemId: 'item-7', itemName: 'বেগুন (গোল তালবেগুন)', quantity: 6, unit: 'পাল্লা', quantityInKg: 30, unitPrice: 50, totalPrice: 1500, costPricePerKg: 42 }
+    ],
+    subtotal: 7500,
+    discount: 100,
+    grandTotal: 7400,
+    paidAmount: 6000,
+    dueAmount: 1400,
+    paymentMethod: 'নগদ',
+    date: '2026-07-20T10:00:00.000Z'
+  },
+  {
+    id: 'sale-079',
+    invoiceNo: 'ইনভ-২০২৬-০৭৭৯',
+    customerId: 'cust-4',
+    customerName: 'মায়ের দোয়া ভেজিটেবল কর্নার',
+    items: [
+      { itemId: 'item-2', itemName: 'পেঁয়াজ (দেশি পাবনা)', quantity: 2, unit: 'বস্তা', quantityInKg: 100, unitPrice: 68, totalPrice: 6800, costPricePerKg: 58 }
+    ],
+    subtotal: 6800,
+    discount: 100,
+    grandTotal: 6700,
+    paidAmount: 6700,
+    dueAmount: 0,
+    paymentMethod: 'নগদ',
+    date: '2026-07-08T09:15:00.000Z'
+  },
+  // June 2026
+  {
+    id: 'sale-070',
+    invoiceNo: 'ইনভ-২০২৬-০৬৭০',
+    customerId: 'cust-1',
+    customerName: 'আলমগীর হোটেল এন্ড রেস্টুরেন্ট',
+    items: [
+      { itemId: 'item-1', itemName: 'আলু (ডায়মন্ড লাল)', quantity: 5, unit: 'বস্তা', quantityInKg: 250, unitPrice: 30, totalPrice: 7500, costPricePerKg: 25 },
+      { itemId: 'item-5', itemName: 'কাঁচামরিচ', quantity: 6, unit: 'পাল্লা', quantityInKg: 30, unitPrice: 120, totalPrice: 3600, costPricePerKg: 95 }
+    ],
+    subtotal: 11100,
+    discount: 100,
+    grandTotal: 11000,
+    paidAmount: 11000,
+    dueAmount: 0,
+    paymentMethod: 'নগদ',
+    date: '2026-06-18T08:30:00.000Z'
+  },
+  // May 2026
+  {
+    id: 'sale-060',
+    invoiceNo: 'ইনভ-২০২৬-০৫৬০',
+    customerId: 'cust-2',
+    customerName: 'আব্দুর রহিম (খুচরা বিক্রেতা)',
+    items: [
+      { itemId: 'item-1', itemName: 'আলু (ডায়মন্ড লাল)', quantity: 4, unit: 'বস্তা', quantityInKg: 200, unitPrice: 28, totalPrice: 5600, costPricePerKg: 24 },
+      { itemId: 'item-2', itemName: 'পেঁয়াজ (দেশি পাবনা)', quantity: 2, unit: 'বস্তা', quantityInKg: 100, unitPrice: 65, totalPrice: 6500, costPricePerKg: 55 }
+    ],
+    subtotal: 12100,
+    discount: 100,
+    grandTotal: 12000,
+    paidAmount: 10000,
+    dueAmount: 2000,
+    paymentMethod: 'নগদ',
+    date: '2026-05-15T09:00:00.000Z'
   }
 ];
 
@@ -538,6 +865,81 @@ export const INITIAL_EXPENSES: BusinessExpense[] = [
     amount: 800,
     date: '2026-09-21T16:00:00.000Z',
     paymentMethod: 'নগদ'
+  },
+  // October 2026
+  {
+    id: 'exp-101',
+    title: 'অক্টোবর দোকান ভাড়া ও বিদ্যুৎ বিল',
+    category: 'দোকান ভাড়া',
+    amount: 2500,
+    date: '2026-10-05T11:00:00.000Z',
+    paidTo: 'আড়ত সমিতি',
+    paymentMethod: 'ব্যাংক'
+  },
+  {
+    id: 'exp-102',
+    title: 'লেবার ও লোডিং মজুরি',
+    category: 'লেবার/কুলি',
+    amount: 1100,
+    date: '2026-10-10T14:00:00.000Z',
+    paidTo: 'বশির সরদার',
+    paymentMethod: 'নগদ'
+  },
+  // August 2026
+  {
+    id: 'exp-81',
+    title: 'আগস্ট মাসের দোকান ভাড়া ও লেবার',
+    category: 'দোকান ভাড়া',
+    amount: 3200,
+    date: '2026-08-05T10:00:00.000Z',
+    paidTo: 'আড়ত সমিতি',
+    paymentMethod: 'ব্যাংক'
+  },
+  {
+    id: 'exp-82',
+    title: 'ট্রাক লোডিং ও কুলি খরচ',
+    category: 'লেবার/কুলি',
+    amount: 1400,
+    date: '2026-08-20T12:00:00.000Z',
+    paidTo: 'লেবার গ্রুপ',
+    paymentMethod: 'নগদ'
+  },
+  // July 2026 (rainy season high expenses)
+  {
+    id: 'exp-71',
+    title: 'বৃষ্টিজনিত ত্রিপল ও পরিবহন অতিরিক্ত খরচ',
+    category: 'যাতায়াত ও গাড়িভাড়া',
+    amount: 3800,
+    date: '2026-07-12T11:30:00.000Z',
+    paidTo: 'ট্রাক চালক',
+    paymentMethod: 'নগদ'
+  },
+  {
+    id: 'exp-72',
+    title: 'জুলাই দোকান ভাড়া ও বিদ্যুৎ বিল',
+    category: 'দোকান ভাড়া',
+    amount: 2800,
+    date: '2026-07-05T09:00:00.000Z',
+    paidTo: 'আড়ত সমিতি',
+    paymentMethod: 'ব্যাংক'
+  },
+  // June 2026
+  {
+    id: 'exp-61',
+    title: 'জুন দোকান ভাড়া ও লেবার খরচ',
+    category: 'দোকান ভাড়া',
+    amount: 2600,
+    date: '2026-06-05T10:00:00.000Z',
+    paymentMethod: 'ব্যাংক'
+  },
+  // May 2026
+  {
+    id: 'exp-51',
+    title: 'মে মাসের আড়ত পরিচালন ও লেবার বিল',
+    category: 'লেবার/কুলি',
+    amount: 2200,
+    date: '2026-05-10T10:00:00.000Z',
+    paymentMethod: 'নগদ'
   }
 ];
 
@@ -552,6 +954,27 @@ export const INITIAL_SPOILAGES: SpoilageRecord[] = [
     reason: 'পচে গেছে',
     date: '2026-09-22T07:45:00.000Z',
     notes: 'বৃষ্টিতে ভিজে পেছনের খাঁচায় কিছু টমেটো পচে নষ্ট হয়েছে'
+  },
+  {
+    id: 'spoil-71',
+    itemId: 'item-6',
+    itemName: 'টমেটো (পাকা দেশি)',
+    quantityKg: 40,
+    costPricePerKg: 50,
+    lossAmount: 2000,
+    reason: 'পচে গেছে',
+    date: '2026-07-15T08:00:00.000Z',
+    notes: 'টানা বর্ষার কারণে চালানে টমেটো ক্ষতিগ্রস্ত হয়েছে'
+  },
+  {
+    id: 'spoil-81',
+    itemId: 'item-8',
+    itemName: 'শসা (কচি হাইব্রিড)',
+    quantityKg: 15,
+    costPricePerKg: 30,
+    lossAmount: 450,
+    reason: 'শুকিয়ে ওজন হ্রাস',
+    date: '2026-08-18T09:00:00.000Z'
   }
 ];
 

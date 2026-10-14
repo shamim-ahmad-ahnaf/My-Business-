@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   TrendingUp, 
   ShoppingCart, 
@@ -13,7 +13,9 @@ import {
   Truck, 
   Sparkles,
   Users,
-  QrCode
+  QrCode,
+  Calendar as CalendarIcon,
+  BarChart3
 } from 'lucide-react';
 import { 
   VegetableItem, 
@@ -28,6 +30,10 @@ import {
 } from '../types';
 import { formatTaka, formatBanglaDate, formatWeight, toBengaliNumber } from '../utils/formatters';
 import { SalesExpensesChart } from './SalesExpensesChart';
+import { MonthlyFinancialCalendar } from './MonthlyFinancialCalendar';
+import { SixMonthProfitLossChart } from './ProfitLossReport';
+import { DailyNetProfitChart } from './DailyNetProfitChart';
+import { ItemProfitBarChart } from './ItemProfitBarChart';
 import { BackupAlertBanner } from './BackupAlertBanner';
 import { BackupAlertStatus } from '../utils/backupAlertService';
 
@@ -78,6 +84,8 @@ export const Dashboard: React.FC<DashboardProps> = ({
   profile,
   onOpenSettings,
 }) => {
+  const [activeAnalyticsView, setActiveAnalyticsView] = useState<'calendar' | 'netprofit' | 'itemprofit' | 'profitloss' | 'chart' | 'both'>('netprofit');
+
   const navigate = (tab: string) => {
     let target = tab;
     if (tab === 'stock') target = 'inventory';
@@ -375,12 +383,143 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
       </div>
 
-      {/* Daily Sales vs Expenses Visual Performance Chart (Recharts) */}
-      <SalesExpensesChart
-        sales={sales}
-        expenses={expenses}
-        spoilages={spoilages}
-      />
+      {/* Analytics & Monthly Calendar Section with Toggle */}
+      <div className="space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-stone-100/70 dark:bg-stone-850 p-2 sm:p-2.5 rounded-2xl border border-stone-200/80 dark:border-stone-800">
+          <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+            <button
+              type="button"
+              onClick={() => setActiveAnalyticsView('netprofit')}
+              className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+                activeAnalyticsView === 'netprofit'
+                  ? 'bg-emerald-700 text-white shadow-xs'
+                  : 'bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-750 text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800'
+              }`}
+            >
+              <TrendingUp className="w-4 h-4 text-teal-400" />
+              <span>৩০ দিনের নিট লাভ</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveAnalyticsView('itemprofit')}
+              className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+                activeAnalyticsView === 'itemprofit'
+                  ? 'bg-emerald-700 text-white shadow-xs'
+                  : 'bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-750 text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800'
+              }`}
+            >
+              <BarChart3 className="w-4 h-4 text-emerald-400" />
+              <span>সবজিভিত্তিক লাভ</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveAnalyticsView('calendar')}
+              className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+                activeAnalyticsView === 'calendar'
+                  ? 'bg-emerald-700 text-white shadow-xs'
+                  : 'bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-750 text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800'
+              }`}
+            >
+              <CalendarIcon className="w-4 h-4" />
+              <span>মাসিক ক্যালেন্ডার</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveAnalyticsView('profitloss')}
+              className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+                activeAnalyticsView === 'profitloss'
+                  ? 'bg-emerald-700 text-white shadow-xs'
+                  : 'bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-750 text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800'
+              }`}
+            >
+              <TrendingUp className="w-4 h-4 text-emerald-500" />
+              <span>বিগত ৬ মাসের লাভ-ক্ষতি</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveAnalyticsView('chart')}
+              className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+                activeAnalyticsView === 'chart'
+                  ? 'bg-emerald-700 text-white shadow-xs'
+                  : 'bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-750 text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800'
+              }`}
+            >
+              <BarChart3 className="w-4 h-4" />
+              <span>দৈনিক গ্রাফ ও ট্রেন্ড</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveAnalyticsView('both')}
+              className={`hidden md:flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
+                activeAnalyticsView === 'both'
+                  ? 'bg-emerald-700 text-white shadow-xs'
+                  : 'bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-750 text-stone-600 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800'
+              }`}
+            >
+              <span>সকল ভিউ একত্রে</span>
+            </button>
+          </div>
+
+          <div className="text-xs text-stone-500 dark:text-stone-400 px-2 flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span>দৈনিক ও মাসিক আয়-ব্যয়ের লাইভ হিসাব</span>
+          </div>
+        </div>
+
+        {/* 1. 30-Day Daily Net Profit Line Chart (Recharts) */}
+        {(activeAnalyticsView === 'netprofit' || activeAnalyticsView === 'both') && (
+          <DailyNetProfitChart
+            sales={sales}
+            expenses={expenses}
+            spoilages={spoilages}
+            onNavigate={navigate}
+          />
+        )}
+
+        {/* 2. Vegetable Item Profit Bar Chart (Recharts) */}
+        {(activeAnalyticsView === 'itemprofit' || activeAnalyticsView === 'both') && (
+          <ItemProfitBarChart
+            sales={sales}
+            items={items}
+            onNavigate={navigate}
+          />
+        )}
+
+        {/* 2. Monthly Financial Calendar */}
+        {(activeAnalyticsView === 'calendar' || activeAnalyticsView === 'both') && (
+          <MonthlyFinancialCalendar
+            sales={sales}
+            expenses={expenses}
+            spoilages={spoilages}
+            onViewInvoice={onViewInvoice}
+            onNavigate={navigate}
+          />
+        )}
+
+        {/* 3. 6-Month Profit/Loss Bar Chart (Recharts) */}
+        {(activeAnalyticsView === 'profitloss' || activeAnalyticsView === 'both') && (
+          <SixMonthProfitLossChart
+            sales={sales}
+            expenses={expenses}
+            spoilages={spoilages}
+            onNavigate={navigate}
+          />
+        )}
+
+        {/* 4. Daily Visual Performance Chart */}
+        {(activeAnalyticsView === 'chart' || activeAnalyticsView === 'both') && (
+          <SalesExpensesChart
+            sales={sales}
+            expenses={expenses}
+            spoilages={spoilages}
+          />
+        )}
+      </div>
 
       {/* Middle Grid: Live Market Ticker & Recent Sales Feed */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -581,6 +720,19 @@ export const Dashboard: React.FC<DashboardProps> = ({
         </div>
 
       </div>
+
+      {/* 6-Month Profit/Loss Bar Chart Section on Dashboard (when not already rendered in top analytics) */}
+      {activeAnalyticsView !== 'profitloss' && activeAnalyticsView !== 'both' && (
+        <div className="pt-2">
+          <SixMonthProfitLossChart
+            sales={sales}
+            expenses={expenses}
+            spoilages={spoilages}
+            onNavigate={navigate}
+            title="বিগত ৬ মাসের সার্বিক ব্যবসায়িক লাভ-ক্ষতির খতিয়ান (Recharts বার চার্ট)"
+          />
+        </div>
+      )}
 
     </div>
   );

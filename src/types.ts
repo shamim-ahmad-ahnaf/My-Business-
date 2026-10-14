@@ -1,10 +1,12 @@
 export type UnitType = 'কেজি' | 'পাল্লা' | 'মণ' | 'বস্তা' | 'খাঁচা' | 'পিস';
 
+export type ProduceCategory = 'শাকসবজি' | 'ফলমূল' | 'মসলাপাতি' | 'নিত্যপ্রয়োজনীয়' | 'অন্যান্য';
+
 export interface VegetableItem {
   id: string;
   nameBn: string;
   nameEn: string;
-  category: 'নিত্যপ্রয়োজনীয়' | 'শাকসবজি' | 'মসলাপাতি' | 'অন্যান্য';
+  category: ProduceCategory | 'মশলা' | string;
   currentStockKg: number; // standardized to KG for precise tracking
   defaultUnit: UnitType;
   avgPurchasePricePerKg: number;
@@ -116,6 +118,17 @@ export interface SpoilageRecord {
   notes?: string;
 }
 
+export interface PriceHistoryPoint {
+  date: string; // ISO format 'YYYY-MM-DD'
+  dayNumber: number; // 1 to 30
+  formattedDateBn: string; // e.g. "১২ অক্টোবর, ২০২৬"
+  shortDateBn: string; // e.g. "১২ অক্টো"
+  wholesalePrice: number;
+  retailPrice: number;
+  margin: number; // retailPrice - wholesalePrice
+  marginPercent: number; // ((retail - wholesale) / wholesale) * 100
+}
+
 export interface MarketRate {
   itemId: string;
   itemName: string;
@@ -127,6 +140,7 @@ export interface MarketRate {
   changePercent: number;
   marketNote: string;
   lastUpdated: string;
+  priceHistory30d?: PriceHistoryPoint[];
 }
 
 export interface AppNotification {
